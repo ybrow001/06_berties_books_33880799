@@ -11,5 +11,18 @@
       <input id="search-box" type="text" name="search">
       <input type="submit" value="Search" >
     </form>
+    <div id="result">
+      <% if(searchResult != null) { %>
+        <ul>
+          <% for(let i = 0; i < books.length; i++) { %>
+            <% if(books[i].name.includes(searchResult)) { %> 
+              <li> <%= `${books[i].name} - £${books[i].price}` %></li>
+            <% } else if(books[i].name.toLowerCase().includes(searchResult)){ %> 
+              <li> <%= `${books[i].name} - £${books[i].price}` %></li>
+            <% } %>
+          <% } %>
+        </ul>
+      <% } %>
+    </div>
   </body>
 </html>

@@ -9,10 +9,12 @@
 <body>
     <h1><%=shopData.shopName%> Shop</h1>
     <div>
-         <h2>Here are the books we sell:</h2>
+         <h2>Here are some of the books we sell at bargain prices!</h2>
          <ul>
-            <% for(let i = 0; i < availableBooks.length; i++) { %>
-                <li><%= `${availableBooks[i].name} - £${availableBooks[i].price}` %></li>
+            <% for(let i = 0; i < bargainBooks.length; i++) { %>   
+                <% if(bargainBooks[i].price < 20.00) { %>
+                    <li><%= `${bargainBooks[i].name} - £${bargainBooks[i].price}`%></li>
+                <% } %>
             <% } %>
          </ul>
     </div>  
