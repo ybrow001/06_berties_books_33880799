@@ -5,6 +5,14 @@ const router = express.Router();
 // include bcrypt
 const bcrypt = require('bcrypt');
 
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId ) {
+        res.redirect('./login') // redirect to the login page
+    } else {
+        next (); // move to the next middleware function
+    } 
+}
+
 router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 });
@@ -36,7 +44,7 @@ router.post('/registered', function (req, res, next) {
     });                                                                
 }); 
 
-router.get('/list', function (req, res, next) {
+router.get('/list', redirectLogin, function (req, res, next) {
     let sqlQuery = `SELECT id, username, first_name, last_name FROM users`; // query database to get all books id, prcices and names
     // execute sql query
     db.query(sqlQuery, (err, result) => {
@@ -66,6 +74,7 @@ router.post('/loggedin', function (req, res, next) {
                 if(err) {
                     next(err)
                 } else if(result == true) {
+                    req.session.userId = req.body.username;
                     res.send(`hello ${username}, your login was successful!`)
                 } else {
                     res.send(`the login credentials entered were incorrect, please try again or make an account on our registration page :)`)

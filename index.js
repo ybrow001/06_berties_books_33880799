@@ -2,16 +2,25 @@
 var express = require ('express');
 var ejs = require('ejs');
 var mysql = require('mysql2');
+var session = require('express-session');
 const path = require('path');
 
 // Create the express application object
 const app = express();
 const port = 8000;
 
+// Create a session
+app.use(session({
+    secret: 'somerandomstuff',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 600000
+    }
+}))
+
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs');
-
-// I am making a temporary change
 
 // Set up the body parser 
 app.use(express.urlencoded({ extended: true }));
