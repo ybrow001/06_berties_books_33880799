@@ -6,7 +6,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 
 // include express-validator
-const {check, validationResult} = require('express-validator');
+const {check, validationResult, body} = require('express-validator');
 
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId ) {
@@ -21,10 +21,15 @@ router.get('/register', function (req, res, next) {
 });
 
 router.post('/registered', [
-    check('email').isEmail(), 
-    check('username').isLength({min: 5, max: 20}),
-    check('password').isLength({min: 8})
+    body('first').trim().escape(),
+    body('last').trim().escape(),
+    body('email').trim().isEmail() /* .normalizeEmail() - removed to allow example emails */, 
+    body('username').trim().isLength({min: 4, max: 20}).withMessage('must be 5-20 characters long'),
+    body('password').isLength({min: 5, max: 20}).withMessage('must be 8-24 characters long')
 ],
+    // due to sanitising before storing in database, if the resulting name is too long for VARCHAR(50) error is thrown
+    // to improve increase size of VARCHAR or change data type
+
 function (req, res, next) {
     // saving data in database
     const saltRounds = 10;
@@ -72,29 +77,42 @@ router.get('/login', function (req, res, next) {
     res.render('login.ejs')
 });
 
-router.post('/loggedin', function (req, res, next) {
+router.post('/loggedin', [
+    check('username').isLength({min: 4, max: 20}),
+    check('password').isLength({min: 4, max: 50})
+],
+    function (req, res, next) {
     let username = req.body.username;
     let plainPassword = req.body.password;
     let sqlQuery = 'SELECT hashed_password FROM users WHERE username=?';
 
-    db.query(sqlQuery, [username], (err, rows) => {
-        if(err) {
-            next(err)
-        } else {
-            let userHash = rows[0].hashed_password;
+    let errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        res.render('./login');
+    } else {
+        db.query(sqlQuery, [username], (err, rows) => {
+            if(err) {
+                next(err)
+            } else {
+                let userHash = rows[0].hashed_password;
             
-            bcrypt.compare(plainPassword, userHash, function(err, result) {
-                if(err) {
-                    next(err)
-                } else if(result == true) {
-                    req.session.userId = req.body.username;
-                    res.send(`hello ${username}, your login was successful!`)
-                } else {
-                    res.send(`the login credentials entered were incorrect, please try again or make an account on our registration page :)`)
-                }
-            })
-        }
-    });
+                bcrypt.compare(plainPassword, userHash, function(err, result) {
+                    if(err) {
+                        next(err)
+                    } else if(result == true) {
+                        let sanitisedUsername = req.sanitize(username); 
+                        // sanitise username before creating session and before displaying
+
+                        req.session.userId = sanitisedUsername;
+                        res.send(`hello ${sanitisedUsername}, your login was successful!`)
+                    } else {
+                        res.send(`the login credentials entered were incorrect, please try again or make an account on our registration page :)`)
+                    }   
+                })
+            }
+        })
+    }  
 });
 
 // export the router object so index.js can access it

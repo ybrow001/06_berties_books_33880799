@@ -4,10 +4,14 @@ var ejs = require('ejs');
 var mysql = require('mysql2');
 var session = require('express-session');
 const path = require('path');
+const expressSanitizer = require('express-sanitizer');
 
 // Create the express application object
 const app = express();
 const port = 8000;
+
+// Create an input sanitizer
+app.use(expressSanitizer());
 
 // Create a session
 app.use(session({
