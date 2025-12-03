@@ -27,7 +27,7 @@ router.get('/search', function(req, res, next){
     res.render('weather.ejs');
 });
 
-router.get('/result', function(req, res, next){ // add styling !! 
+router.get('/result', function(req, res, next){ // add styling !!
     let apiKey = 'a89f7bf91eb5ad9393be9dabf1c50955'; // possibly turn into user input and hash to hide
     let city = req.query.city;
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
