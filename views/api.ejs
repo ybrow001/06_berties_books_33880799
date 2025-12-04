@@ -7,8 +7,15 @@
   <body>
     <h1><%=shopData.shopName%> api search</h1>
     <form method="GET" action="books">
-      <p>book title: <input id="title" type="text" name="title"/></p>
-      <input type="submit" value="get book api"/>
+      <p>book title:</p>
+      <input id="title" type="text" name="title"/></p> 
+      <input type="submit" value="get book api by title"/>
+    </form>
+
+    <form method="GET" action="books/price">
+        <p>price range:</p>
+        <p>min: <input id="min" type="number" name="min" min="1.00" max="30.00" required/> max: <input id="max" type="number" name="max" min="1.00" max="30.00" required/></p>
+        <input type="submit" value="get book api by price"/>
     </form>
   </body>
 </html>
