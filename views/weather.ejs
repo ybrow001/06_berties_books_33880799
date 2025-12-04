@@ -7,8 +7,21 @@
   <body>
     <h1><%=shopData.shopName%> weather reporter</h1>
     <form method="GET" action="result">
-        <p>city: <input id="city" type="text" name="city"/></p>
-        <input type="submit" value="find forecast!"/>
+      <p>city: <input id="city" type="text" name="city"/></p>
+      <input type="submit" value="find forecast!"/>
     </form>
+    <% if(weather != null) { %>
+      <% if(location == "london") { %>
+        <h3>the current weather in London:</h3>
+        <p>it is <%=weather.main.temp%> degrees in <%=weather.name%> and the humidity is <%=weather.main.humidity%>!</p>
+      <% } else { %>
+      <h3>your <%=shopData.shopName%> weather report:</h3>
+      <p>
+        it is <%=weather.main.temp%> degrees in <%=weather.name%> and the humidity is <%=weather.main.humidity%>! 
+        <br> 
+        the weather type is <%=weather.weather[0].main%>, it can be described as <%=weather.weather[0].description%>.
+      </p>
+      <% } %>
+    <% } %>
   </body>
 </html>

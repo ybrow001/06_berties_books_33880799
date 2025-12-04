@@ -14,17 +14,16 @@ router.get('/',function(req, res, next){
         if(err){
             next(err)
         } else {
-            var weather = JSON.parse(body)
-            var wmsg = `it is ${weather.main.temp} degrees in ${weather.name} 
-            and the humidity is ${weather.main.humidity}!`;
-            res.send (wmsg);
+            var weather = JSON.parse(body);
+            var location = "london";
+            res.render('weather.ejs', {weather: weather, location: location});
             // res.send(body)
         }
     });
 });
 
 router.get('/search', function(req, res, next){
-    res.render('weather.ejs');
+    res.render('weather.ejs', {weather: null, location: null});
 });
 
 router.get('/result', function(req, res, next){ // add styling !!
@@ -40,10 +39,8 @@ router.get('/result', function(req, res, next){ // add styling !!
             res.send("sorry, your forecast could not be retrieved :(");
         } else {
             var weather = JSON.parse(body);
-            var wmsg = `it is ${weather.main.temp} degrees in ${weather.name} and the humidity is ${weather.main.humidity}! 
-            <br> 
-            the weather type is ${weather.weather[0].main}, it can be described as ${weather.weather[0].description}.`;
-            res.send(wmsg);
+            var location = "global";
+            res.render('weather.ejs', {weather: weather, location: location});
         }
     });
 });
